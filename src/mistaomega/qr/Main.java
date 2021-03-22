@@ -15,7 +15,7 @@ public class Main {
      * @throws WriterException range of exceptions which may occur when encoding a barcode using the Writer framework.
      */
     public static void main(String[] args) throws IOException, WriterException {
-        String data = "www.bbc.co.uk"; // data the QR code is going to contain
+        String data = "www.liverpoolmuseums.org.uk/whatson/world-museum/exhibition/space-and-time-gallery"; // data the QR code is going to contain
         String path = "test.png"; // path where the QR code will be saved
 
         // Encoding charset
