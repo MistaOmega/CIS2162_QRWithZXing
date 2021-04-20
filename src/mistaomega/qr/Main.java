@@ -2,6 +2,8 @@ package mistaomega.qr;
 
 
 import com.google.zxing.WriterException;
+import mistaomega.Utilities;
+import org.json.simple.JSONArray;
 
 import java.io.IOException;
 
