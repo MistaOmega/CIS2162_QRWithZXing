@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainUI {
+public class MainUI implements Runnable {
     private JPanel mainPanel;
     private JButton btnQuestion1;
     private JButton btnQuestion2;
@@ -20,6 +20,7 @@ public class MainUI {
     private JButton btnQuestion4;
     private JLabel lblQuestionTitle;
     private JPanel imagePan;
+    private boolean answeringQuestion;
 
     private JSONArray Questions;
 
@@ -27,11 +28,27 @@ public class MainUI {
 
     }
 
-    @SuppressWarnings("unchecked") // KEKW
-    public void initialize() {
+
+
+    public boolean isAnsweringQuestion() {
+        return answeringQuestion;
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
+    private void createUIComponents() throws IOException, WriterException {
+        // TODO: place custom component creation code here
+        imagePan = new ImagePanel(QRGen.GenerateQRAsBufferedImage("https://www.liverpoolmuseums.org.uk/whatson/world-museum/exhibition/space-and-time-gallery", "UTF-8", 200, 200));
+    }
+
+    @Override
+    public void run() {
         Questions = Utilities.DecodeJSON();
         List<String> answers = new ArrayList<>();
         Questions.forEach(item -> {
+            answeringQuestion = true;
             JSONObject question = (JSONObject) item;
             System.out.println(question.toJSONString());
 
@@ -50,16 +67,10 @@ public class MainUI {
             btnQuestion2.setText(answers.get(1));
             btnQuestion3.setText(answers.get(2));
             btnQuestion4.setText(answers.get(3));
+            while(isAnsweringQuestion()){
+
+            }
+
         });
-
-    }
-
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
-
-    private void createUIComponents() throws IOException, WriterException {
-        // TODO: place custom component creation code here
-        imagePan = new ImagePanel(QRGen.GenerateQRAsBufferedImage("https://www.liverpoolmuseums.org.uk/whatson/world-museum/exhibition/space-and-time-gallery", "UTF-8", 200, 200));
     }
 }
