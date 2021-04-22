@@ -6,6 +6,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -14,10 +15,16 @@ import java.util.Map;
  * Generates a QR code and writes to path
  */
 public class QRGen {
-    public static void GenerateQR(String inputData, String outputPath, String charset,
+    public static void GenerateQRAsFile(String inputData, String outputPath, String charset,
                                   int height, int width) throws WriterException, IOException {
         BitMatrix matrix = new MultiFormatWriter().encode(new String(inputData.getBytes(charset), charset), BarcodeFormat.QR_CODE, width, height); //Represents a 2D matrix of bits
         MatrixToImageWriter.writeToPath(matrix, outputPath.substring(outputPath.lastIndexOf('.') + 1), Paths.get(outputPath)); // output
+    }
+
+    public static BufferedImage GenerateQRAsBufferedImage(String inputData, String charset,
+                                                          int height, int width) throws WriterException, IOException {
+        BitMatrix matrix = new MultiFormatWriter().encode(new String(inputData.getBytes(charset), charset), BarcodeFormat.QR_CODE, width, height); //Represents a 2D matrix of bits
+        return MatrixToImageWriter.toBufferedImage(matrix); // output
     }
 
 
