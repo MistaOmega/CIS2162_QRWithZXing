@@ -7,6 +7,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,16 +21,44 @@ public class MainUI implements Runnable {
     private JButton btnQuestion3;
     private JButton btnQuestion4;
     private JLabel lblQuestionTitle;
-    private JPanel imagePan;
+    private ImagePanel imagePanel;
     private boolean answeringQuestion;
+    private JSONObject question;
 
     private JSONArray Questions;
+    private final Object lock = new Object();
 
     public MainUI() {
 
+        btnQuestion1.addActionListener(actionEvent -> {
+            handleAnswer(btnQuestion1.getText());
+        });
+        btnQuestion2.addActionListener(actionEvent -> {
+            handleAnswer(btnQuestion2.getText());
+        });
+        btnQuestion3.addActionListener(actionEvent -> {
+            handleAnswer(btnQuestion3.getText());
+        });
+        btnQuestion4.addActionListener(actionEvent -> {
+            handleAnswer(btnQuestion4.getText());
+        });
+
     }
 
+    private void handleAnswer(String answer){
+        System.out.println("HEllo");
+        if(answer.equals(question.get("answerCorrect"))){
+            //todo
+        }
+        synchronized(lock){
+            lock.notify();
+        }
+        setAnsweringQuestion(false);
+    }
 
+    private void createUIComponents() throws IOException, WriterException {
+        imagePanel = new ImagePanel(QRGen.GenerateQRAsBufferedImage("www.google.com", "UTF-8", 200, 200));
+    }
 
     public boolean isAnsweringQuestion() {
         return answeringQuestion;
@@ -38,9 +68,8 @@ public class MainUI implements Runnable {
         return mainPanel;
     }
 
-    private void createUIComponents() throws IOException, WriterException {
-        // TODO: place custom component creation code here
-        imagePan = new ImagePanel(QRGen.GenerateQRAsBufferedImage("https://www.liverpoolmuseums.org.uk/whatson/world-museum/exhibition/space-and-time-gallery", "UTF-8", 200, 200));
+    public void setAnsweringQuestion(boolean answeringQuestion) {
+        this.answeringQuestion = answeringQuestion;
     }
 
     @Override
@@ -49,7 +78,8 @@ public class MainUI implements Runnable {
         List<String> answers = new ArrayList<>();
         Questions.forEach(item -> {
             answeringQuestion = true;
-            JSONObject question = (JSONObject) item;
+            question = (JSONObject) item;
+            answers.clear();
             System.out.println(question.toJSONString());
 
             lblQuestionTitle.setText((String) question.get("title"));
@@ -61,15 +91,28 @@ public class MainUI implements Runnable {
                 }
             });
 
+            try {
+                imagePanel.setImage(QRGen.GenerateQRAsBufferedImage((String) question.get("url"), "UTF-8", 200, 200));
+            } catch (WriterException | IOException e) {
+                e.printStackTrace();
+            }
+
 
             Collections.shuffle(answers);
             btnQuestion1.setText(answers.get(0));
             btnQuestion2.setText(answers.get(1));
             btnQuestion3.setText(answers.get(2));
             btnQuestion4.setText(answers.get(3));
-            while(isAnsweringQuestion()){
-
+            synchronized(lock) {
+                while(isAnsweringQuestion()) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+
 
         });
     }
