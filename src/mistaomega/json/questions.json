@@ -32,52 +32,52 @@
       "url": "https://www.grc.nasa.gov/www/k-12/TRC/Rockets/history_of_rockets.html"
     },
     {
-      "title": "How fast can a rocket travel?",
-      "answer1": "20,000 Miles Per Hour",
-      "answer2": "14,000 Miles Per Hour",
-      "answer3": "12,000 Miles Per Hour",
-      "answerCorrect": "15,000 Mile Per Hour",
-      "url": ""
+      "title": "How fast does a rocket need to travel to escape earths gravity?",
+      "answer1": "22,000 Miles Per Hour",
+      "answer2": "28,000 Miles Per Hour",
+      "answer3": "23,000 Miles Per Hour",
+      "answerCorrect": "25,000 Mile Per Hour",
+      "url": "https://coolcosmos.ipac.caltech.edu/ask/267-How-fast-does-a-rocket-have-to-travel-to-get-into-space-"
     },
     {
-      "title": "",
-      "answer1": "",
-      "answer2": "",
-      "answer3": "",
-      "answerCorrect": "",
-      "url": ""
+      "title": "How long does it take a rocket to get into space?",
+      "answer1": "10 minutes",
+      "answer2": "6 and a half minutes",
+      "answer3": "5 minutes",
+      "answerCorrect": "8 and a half minutes",
+      "url": "https://www.express.co.uk/news/science/1287950/SpaceX-launch-How-long-does-it-take-to-get-to-space#:~:text=NASA%20launch%20director%20Mike%20Leinbach,8%2D1%2F2%20minutes."
     },
     {
-      "title": "",
-      "answer1": "",
-      "answer2": "",
-      "answer3": "",
-      "answerCorrect": "",
-      "url": ""
+      "title": "How many components make up the main body of a Rocket?",
+      "answer1": "10",
+      "answer2": "2",
+      "answer3": "6",
+      "answerCorrect": "4",
+      "url": "https://www.kyrene.org/cms/lib/AZ01001083/Centricity/Domain/1655/STEM/2%20Liter%20Rockets/Rocket%20Parts.pdf"
     },
     {
-      "title": "",
-      "answer1": "",
-      "answer2": "",
-      "answer3": "",
-      "answerCorrect": "",
-      "url": ""
+      "title": "How long does it take to build a Rocket which will carry Astronauts?",
+      "answer1": "3 Years",
+      "answer2": "7 Years",
+      "answer3": "18 Months",
+      "answerCorrect": "5 Years",
+      "url": "https://howthingsfly.si.edu/ask-an-explainer/how-long-does-it-take-build-rocket#:~:text=A%20'simple'%20rocket%2C%20like,to%20make%2C%20start%20to%20finish."
     },
     {
-      "title": "",
-      "answer1": "",
-      "answer2": "",
-      "answer3": "",
-      "answerCorrect": "",
-      "url": ""
+      "title": "When did the first space shuttle fly?",
+      "answer1": "1982",
+      "answer2": "1986",
+      "answer3": "1984",
+      "answerCorrect": "1981",
+      "url": "https://www.nasa.gov/multimedia/imagegallery/image_feature_2488.html"
     },
     {
-      "title": "",
-      "answer1": "",
-      "answer2": "",
-      "answer3": "",
-      "answerCorrect": "",
-      "url": ""
+      "title": "How many space shuttles were there?",
+      "answer1": "3",
+      "answer2": "5",
+      "answer3": "8",
+      "answerCorrect": "6",
+      "url": "https://www.foxbusiness.com/technology/where-are-retired-nasa-space-shuttles"
     }
   ]
 }
