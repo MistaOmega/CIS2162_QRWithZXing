@@ -6,9 +6,12 @@ import mistaomega.qr.QRGen;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,10 +27,13 @@ public class MainUI implements Runnable {
     private ImagePanel imagePanel;
     private boolean answeringQuestion;
     private JSONObject question;
+    private int total;
+    private boolean corFlag;
 
     private JSONArray Questions;
     private final Object lock = new Object();
 
+    //region setup
     public MainUI() {
 
         btnQuestion1.addActionListener(actionEvent -> {
@@ -45,21 +51,115 @@ public class MainUI implements Runnable {
 
     }
 
+
+    private void createUIComponents() throws IOException, WriterException {
+        imagePanel = new ImagePanel(QRGen.GenerateQRAsBufferedImage("www.google.com", "UTF-8", 200, 200));
+    }
+    //endregion
+
+
+
+    //region main
+    /**
+     * Entry point for main UI
+     * Decode JSONs file and iterates through each question
+     * Each question has an answer list generated
+     * UI is decorated with question title, QR code to correct link and answers (which are shuffled before display)
+     * Awaits answer, displays correct or incorrect
+     * Results shown to user at the end
+     */
+    @Override
+    public void run() {
+        Questions = Utilities.DecodeJSON();
+        List<String> answers = new ArrayList<>();
+
+        // Go throught each question item by item
+        Questions.forEach(item -> {
+            // setup for each question
+            corFlag = false;
+            answeringQuestion = true;
+            question = (JSONObject) item;
+            answers.clear();
+            //System.out.println(question.toJSONString()); // debug for demonstration
+
+            lblQuestionTitle.setText((String) question.get("title"));
+
+            // get a list of all answers
+            question.forEach((k,v) ->{
+                if(k.equals("answer1") ||  k.equals("answer2") || k.equals("answer3") ||  k.equals("answerCorrect")){
+                    answers.add((String) v);
+                }
+            });
+
+            // set the QR code to check for
+            try {
+                imagePanel.setImage(QRGen.GenerateQRAsBufferedImage((String) question.get("url"), "UTF-8", 200, 200));
+            } catch (WriterException | IOException e) {
+                e.printStackTrace();
+            }
+
+            //shuffle answers to different buttons
+            Collections.shuffle(answers);
+            btnQuestion1.setText(answers.get(0));
+            btnQuestion2.setText(answers.get(1));
+            btnQuestion3.setText(answers.get(2));
+            btnQuestion4.setText(answers.get(3));
+            synchronized(lock) { // this lock can be called from elsewhere, avoids busy-waiting
+                while(isAnsweringQuestion()) { //await response
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // check if correct and display correct image
+            try {
+                if (corFlag) {
+                    imagePanel.setImage(ImageIO.read(new File("src/mistaomega/images/Welldone.jpg")));
+                    lblQuestionTitle.setText("Correct, please wait 3 seconds");
+                } else {
+                    imagePanel.setImage(ImageIO.read(new File("src/mistaomega/images/Incorrect.jpg")));
+                    lblQuestionTitle.setText("Incorrect, please wait 3 seconds");
+                }
+
+                Thread.sleep(3000);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+        });
+
+        // show results
+        Results gui = new Results(total);
+        Thread th = new Thread(gui);
+        th.start();
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("Results");
+        frame.setContentPane(gui.getMainPanel());
+        frame.pack();
+        frame.setVisible(true);
+
+
+    }
+
+
     private void handleAnswer(String answer){
-        System.out.println("HEllo");
         if(answer.equals(question.get("answerCorrect"))){
-            //todo
+            total += 1;
+            corFlag = true;
         }
         synchronized(lock){
             lock.notify();
         }
         setAnsweringQuestion(false);
     }
+    //endregion
 
-    private void createUIComponents() throws IOException, WriterException {
-        imagePanel = new ImagePanel(QRGen.GenerateQRAsBufferedImage("www.google.com", "UTF-8", 200, 200));
-    }
-
+    //region getters and setters
     public boolean isAnsweringQuestion() {
         return answeringQuestion;
     }
@@ -71,49 +171,6 @@ public class MainUI implements Runnable {
     public void setAnsweringQuestion(boolean answeringQuestion) {
         this.answeringQuestion = answeringQuestion;
     }
-
-    @Override
-    public void run() {
-        Questions = Utilities.DecodeJSON();
-        List<String> answers = new ArrayList<>();
-        Questions.forEach(item -> {
-            answeringQuestion = true;
-            question = (JSONObject) item;
-            answers.clear();
-            System.out.println(question.toJSONString());
-
-            lblQuestionTitle.setText((String) question.get("title"));
-
-            // get a list of all answers
-            question.forEach((k,v) ->{
-                if(k.equals("answer1") ||  k.equals("answer2") || k.equals("answer3") ||  k.equals("answerCorrect")){
-                    answers.add((String) v);
-                }
-            });
-
-            try {
-                imagePanel.setImage(QRGen.GenerateQRAsBufferedImage((String) question.get("url"), "UTF-8", 200, 200));
-            } catch (WriterException | IOException e) {
-                e.printStackTrace();
-            }
-
-
-            Collections.shuffle(answers);
-            btnQuestion1.setText(answers.get(0));
-            btnQuestion2.setText(answers.get(1));
-            btnQuestion3.setText(answers.get(2));
-            btnQuestion4.setText(answers.get(3));
-            synchronized(lock) {
-                while(isAnsweringQuestion()) {
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-
-        });
-    }
+    //endregion
 }
+

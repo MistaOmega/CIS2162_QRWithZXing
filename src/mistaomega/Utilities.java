@@ -13,15 +13,19 @@ import java.io.IOException;
  * Common Utilities
  */
 public class Utilities {
+    /**
+     * Decode JSON file into JSONArray
+     * @return Array of questions
+     */
     public static JSONArray DecodeJSON(){
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(); // setup json parser
         try {
-            Object obj = parser.parse(new FileReader("src/mistaomega/json/questions.json"));
+            Object obj = parser.parse(new FileReader("src/mistaomega/json/questions.json")); //parse into object and convert to json object
             JSONObject jsonObject = (JSONObject)obj;
-            return (JSONArray)jsonObject.get("Questions");
+            return (JSONArray)jsonObject.get("Questions");  //form array from Questions
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-        return new JSONArray();
+        return new JSONArray(); //return
     }
 }

@@ -27,11 +27,12 @@ public class Main {
 
         setLookAndFeel();
 
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> { //invoke on new thread
             MainUI gui = new MainUI();
             Thread thread = new Thread(gui);
             thread.start();
             JFrame frame = new JFrame();
+            frame.setTitle("Question UI");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setContentPane(gui.getMainPanel());
             frame.pack();
@@ -40,6 +41,9 @@ public class Main {
         });
     }
 
+    /**
+     * Set style to be OS specific
+     */
     public static void setLookAndFeel() {
         try {
             UIManager.setLookAndFeel(
